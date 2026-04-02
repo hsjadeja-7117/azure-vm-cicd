@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Panetar — House of Sarees</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
+<style>
+
+/* ─────────────── TOKENS ─────────────── */
+:root {
+  --bg:       #FAF7F2;
+  --bg2:      #F4EFE6;
+  --white:    #FFFFFF;
+  --gold:     #B8912A;
+  --gold-lt:  #D4AE56;
+  --gold-pale:#F0E6C8;
+  --rose:     #8B2635;
+  --rose-lt:  #A83448;
+  --ink:      #1E120A;
+  --mid:      #5A3D2B;
+  --soft:     #9C7E6A;
+  --border:   rgba(184,145,42,0.18);
+  --border2:  rgba(184,145,42,0.35);
+  --shadow:   0 4px 32px rgba(30,18,10,0.07);
+  --shadow2:  0 12px 56px rgba(30,18,10,0.11);
+  --r:        2px;
+  --ease:     cubic-bezier(0.4,0,0.2,1);
+  --spring:   cubic-bezier(0.34,1.4,0.64,1);
+}
+
+/* ─────────────── RESET ─────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+ul{list-style:none;}
+button{border:none;background:none;font:inherit;cursor:pointer;}
+img{display:block;max-width:100%;}
+
+/* ─────────────── PAGE SYSTEM ─────────────── */
+.page{display:none;}
+.page.active{display:block;animation:rise .6s var(--ease) both;}
+@keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* ─────────────── REVEAL ─────────────── */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
+.rv.in{opacity:1;transform:none;}
+.rv.d1{transition-delay:.1s;}
+.rv.d2{transition-delay:.2s;}
+.rv.d3{transition-delay:.32s;}
+.rv.d4{transition-delay:.44s;}
+
+/* ─────────────── HEADER ─────────────── */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  transition:background .4s,box-shadow .4s;
+}
+header.solid{
+  background:rgba(250,247,242,0.96);
+  backdrop-filter:blur(16px);
+  box-shadow:0 1px 0 var(--border);
+}
+.hd-top{
+  background:var(--rose);
+  text-align:center;
+  padding:8px 16px;
+  font-size:.68rem;
+  font-weight:300;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.8);
+  transition:height .35s,padding .35s,opacity .35s;
+  overflow:hidden;
+}
+header.solid .hd-top{height:0;padding:0;opacity:0;}
+.hd-top a{color:#f5e0c8;font-weight:400;}
+
+.hd-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;max-width:1400px;margin:0 auto;height:68px;
+}
+.logo{cursor:pointer;}
+.logo-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.7rem;font-weight:600;font-style:italic;
+  color:var(--ink);letter-spacing:.03em;line-height:1;
+}
+.logo-tag{
+  font-size:.6rem;font-weight:300;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--gold);
+  display:block;margin-top:1px;
+}
+
+nav{display:flex;align-items:center;gap:4px;}
+.nk{
+  font-size:.7rem;font-weight:400;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--mid);
+  padding:8px 14px;cursor:pointer;position:relative;
+  transition:color .3s;
+}
+.nk::after{
+  content:'';position:absolute;
+  bottom:4px;left:14px;right:14px;height:1px;
+  background:var(--rose);transform:scaleX(0);transform-origin:right;
+  transition:transform .35s var(--ease);
+}
+.nk:hover,.nk.on{color:var(--rose);}
+.nk:hover::after,.nk.on::after{transform:scaleX(1);transform-origin:left;}
+
+.nk-cta{
+  font-size:.68rem;font-weight:400;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--white);
+  background:var(--rose);padding:10px 22px;margin-left:8px;
+  transition:background .3s,transform .3s;
+}
+.nk-cta:hover{background:var(--rose-lt);transform:translateY(-1px);}
+
+.hbg{display:none;flex-direction:column;gap:5px;padding:8px;}
+.hbg span{display:block;width:22px;height:1.5px;background:var(--ink);transition:.3s;}
+.mob{display:none;flex-direction:column;background:var(--white);border-top:1px solid var(--border);}
+.mob.open{display:flex;}
+.mob .nk{padding:14px 5%;border-bottom:1px solid var(--border);font-size:.82rem;}
+
+/* ─────────────── HERO ─────────────── */
+.hero{
+  min-height:100vh;display:grid;grid-template-columns:1fr 1fr;
+  padding-top:100px;background:var(--bg);position:relative;overflow:hidden;
+}
+/* subtle diagonal accent */
+.hero::after{
+  content:'';position:absolute;
+  top:0;right:0;width:50%;height:100%;
+  background:var(--bg2);clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);
+  z-index:0;
+}
+
+.hero-left{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 6% 80px 8%;
+}
+.hero-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.65rem;font-weight:300;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--border2);padding:6px 16px;
+  width:fit-content;margin-bottom:28px;
+  animation:rise .7s .2s var(--ease) both;
+}
+.hero-chip::before{content:'✦';font-size:.5rem;}
+
+.hero-h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3.2rem,7vw,6.5rem);
+  font-weight:300;line-height:.95;letter-spacing:-.01em;
+  color:var(--ink);margin-bottom:28px;
+  animation:rise .9s .35s var(--ease) both;
+}
+.hero-h1 em{font-style:italic;color:var(--rose);}
+.hero-h1 span{display:block;}
+
+.hero-p{
+  font-size:.95rem;font-weight:300;line-height:1.85;
+  color:var(--soft);max-width:400px;margin-bottom:40px;
+  animation:rise .8s .5s var(--ease) both;
+}
+
+.hero-btns{
+  display:flex;gap:14px;flex-wrap:wrap;
+  animation:rise .8s .65s var(--ease) both;
+}
+.btn-p{
+  font-size:.72rem;font-weight:400;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--white);
+  background:var(--rose);padding:14px 32px;
+  transition:background .3s,transform .25s var(--spring),box-shadow .3s;
+}
+.btn-p:hover{background:var(--rose-lt);transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,38,53,.22);}
+.btn-o{
+  font-size:.72rem;font-weight:300;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--rose);
+  border:1px solid var(--rose);padding:13px 32px;
+  transition:background .3s,color .3s,transform .25s var(--spring);
+}
+.btn-o:hover{background:var(--rose);color:var(--white);transform:translateY(-2px);}
+
+.hero-nums{
+  display:flex;gap:36px;margin-top:52px;padding-top:36px;
+  border-top:1px solid var(--border);
+  animation:rise .7s .8s var(--ease) both;
+}
+.hn-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;font-weight:600;color:var(--rose);line-height:1;
+}
+.hn-l{font-size:.67rem;font-weight:300;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-top:3px;}
+
+.hero-right{
+  position:relative;z-index:2;
+  display:flex;align-items:stretch;
+  padding:80px 5% 80px 0;
+  animation:rise .9s .25s var(--ease) both;
+}
+.hero-panels{
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+  gap:8px;width:100%;border-radius:var(--r);overflow:hidden;
+}
+.hp{position:relative;overflow:hidden;min-height:180px;}
+.hp-inner{position:absolute;inset:0;transition:transform .7s var(--ease);}
+.hp:hover .hp-inner{transform:scale(1.04);}
+
+.hp-1 .hp-inner{
+  background:linear-gradient(155deg,#9B1B30 0%,#6E1220 60%,#3A0A14 100%);
+  grid-row:1/3;
+}
+.hp-1 .hp-inner::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(201,168,76,.14) 0,rgba(201,168,76,.14) 1.5px,transparent 1.5px,transparent 20px),
+    repeating-linear-gradient(-45deg,rgba(201,168,76,.14) 0,rgba(201,168,76,.14) 1.5px,transparent 1.5px,transparent 20px);
+}
+.hp-2 .hp-inner{background:linear-gradient(135deg,#E8D5B0 0%,#D4BF96 100%);}
+.hp-3 .hp-inner{
+  background:linear-gradient(135deg,#0D3557 0%,#1A5C8B 100%);
+}
+.hp-3 .hp-inner::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,rgba(201,168,76,.18) 0,rgba(201,168,76,.18) 2px,transparent 2px,transparent 28px);
+}
+.hp-1{grid-row:1/3;}
+
+.hp-lbl{
+  position:absolute;bottom:14px;left:14px;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.9rem;color:rgba(255,255,255,.85);
+  text-shadow:0 1px 8px rgba(0,0,0,.3);z-index:1;
+}
+.hp-lbl-dk{color:rgba(30,18,10,.45);text-shadow:none;}
+
+/* floating badge */
+.hero-badge{
+  position:absolute;bottom:36px;left:-24px;z-index:10;
+  background:var(--white);border:1px solid var(--border2);
+  padding:16px 20px;box-shadow:var(--shadow2);
+  animation:rise .7s 1s var(--ease) both;
+}
+.hb-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem;font-weight:600;color:var(--rose);line-height:1;
+}
+.hb-l{font-size:.62rem;font-weight:300;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);}
+
+/* ─────────────── MARQUEE ─────────────── */
+.mq{
+  background:var(--rose);padding:12px 0;overflow:hidden;
+  white-space:nowrap;
+}
+.mq-track{
+  display:inline-flex;gap:0;
+  animation:mq 25s linear infinite;
+}
+.mq-item{
+  display:inline-flex;align-items:center;gap:24px;padding:0 24px;
+  font-size:.67rem;font-weight:300;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(255,255,255,.7);
+}
+.mq-dot{width:3px;height:3px;background:rgba(255,255,255,.4);border-radius:50%;flex-shrink:0;}
+@keyframes mq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ─────────────── SHARED SECTION ─────────────── */
+.sec{padding:96px 5%;}
+.wrap{max-width:1200px;margin:0 auto;}
+.center{text-align:center;}
+
+.eyebrow{
+  font-size:.64rem;font-weight:300;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--gold);
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.eyebrow .eb-line{flex:1;max-width:36px;height:1px;background:var(--gold);}
+.eyebrow-c{justify-content:center;}
+.eyebrow-c .eb-line{width:36px;flex:none;}
+
+.h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,4vw,3.6rem);
+  font-weight:300;line-height:1.1;color:var(--ink);
+}
+.h2 em{font-style:italic;color:var(--rose);}
+
+.rule{
+  display:flex;align-items:center;gap:10px;margin:20px 0 32px;
+}
+.rule .rl{flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);}
+.rule .rl.rev{background:linear-gradient(-90deg,var(--gold),transparent);}
+.rule .rd{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;}
+.rule-c{justify-content:center;}.rule-c .rl,.rule-c .rl.rev{max-width:60px;}
+
+.body-p{
+  font-size:.9rem;font-weight:300;line-height:1.9;color:var(--soft);
+}
+.lead-p{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.15rem;font-weight:300;line-height:1.8;color:var(--mid);
+}
+
+/* ─────────────── ABOUT SPLIT (HOME) ─────────────── */
+.about-split{
+  display:grid;grid-template-columns:1fr 1fr;
+  background:var(--bg2);
+}
+.about-vis{
+  position:relative;overflow:hidden;min-height:480px;
+}
+.about-vis-inner{
+  position:absolute;inset:0;
+  background:linear-gradient(155deg,#9B1B30 0%,#6E1220 45%,#2A0810 100%);
+  transition:transform .8s var(--ease);
+}
+.about-vis:hover .about-vis-inner{transform:scale(1.03);}
+.about-vis-inner::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(201,168,76,.1) 0,rgba(201,168,76,.1) 1.5px,transparent 1.5px,transparent 18px),
+    repeating-linear-gradient(-45deg,rgba(201,168,76,.1) 0,rgba(201,168,76,.1) 1.5px,transparent 1.5px,transparent 18px);
+}
+.about-ring{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:180px;height:180px;border-radius:50%;
+  border:1px solid rgba(201,168,76,.25);
+  display:flex;align-items:center;justify-content:center;
+}
+.about-ring::before{
+  content:'';position:absolute;inset:14px;border-radius:50%;
+  border:1px solid rgba(201,168,76,.12);
+}
+.about-ring-txt{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1rem;color:rgba(201,168,76,.6);text-align:center;line-height:1.4;
+}
+
+.about-content{
+  padding:72px 7%;display:flex;flex-direction:column;justify-content:center;
+}
+.about-content .lead-p{max-width:420px;margin:16px 0 20px;}
+.about-content .body-p{max-width:400px;margin-bottom:36px;}
+.about-stats{
+  display:flex;gap:36px;padding-top:32px;border-top:1px solid var(--border);flex-wrap:wrap;
+}
+.as-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;font-weight:600;color:var(--rose);line-height:1;
+}
+.as-l{font-size:.65rem;font-weight:300;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-top:2px;}
+
+/* ─────────────── WHY US (HOME) ─────────────── */
+.pillars{background:var(--white);}
+.pillars-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);border:1px solid var(--border);
+  margin-top:56px;
+}
+.pc{
+  background:var(--white);padding:44px 32px;
+  transition:background .35s,transform .35s var(--ease);
+  position:relative;overflow:hidden;
+}
+.pc::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:var(--rose);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.pc:hover{background:var(--bg);}
+.pc:hover::after{transform:scaleX(1);}
+.pc-icon{font-size:1.5rem;margin-bottom:18px;display:block;}
+.pc-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-weight:600;color:var(--ink);margin-bottom:10px;
+}
+.pc-t{font-size:.82rem;font-weight:300;line-height:1.75;color:var(--soft);}
+
+/* ─────────────── TESTIMONIALS (HOME) ─────────────── */
+.testi-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;margin-top:56px;
+}
+.tc{
+  background:var(--white);border:1px solid var(--border);
+  padding:36px 28px;
+  transition:transform .4s var(--ease),box-shadow .4s;
+}
+.tc:hover{transform:translateY(-6px);box-shadow:var(--shadow2);}
+.tc-q{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.05rem;font-weight:300;line-height:1.8;
+  color:var(--mid);margin-bottom:22px;
+}
+.tc-stars{color:var(--gold);font-size:.75rem;letter-spacing:.1em;margin-bottom:12px;}
+.tc-name{font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--rose);}
+.tc-loc{font-size:.7rem;font-weight:300;color:var(--soft);margin-top:2px;}
+
+/* ─────────────── PAGE HERO (inner pages) ─────────────── */
+.pg-hero{
+  background:var(--bg2);padding:180px 5% 80px;
+  border-bottom:1px solid var(--border);
+}
+.pg-hero .h2{max-width:700px;}
+.pg-hero .body-p{max-width:520px;margin-top:16px;}
+
+/* ─────────────── SAREES PAGE ─────────────── */
+.filter-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:48px;
+}
+.fl-lbl{
+  font-size:.65rem;font-weight:300;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--soft);margin-right:4px;
+}
+.fb{
+  font-size:.68rem;font-weight:300;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mid);
+  padding:8px 20px;border:1px solid var(--border2);
+  background:var(--white);transition:all .3s var(--ease);
+}
+.fb:hover,.fb.on{background:var(--rose);color:var(--white);border-color:var(--rose);}
+
+.saree-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+}
+.st{
+  background:var(--white);border:1px solid var(--border);
+  overflow:hidden;
+  transition:transform .4s var(--ease),box-shadow .4s;
+}
+.st:hover{transform:translateY(-6px);box-shadow:var(--shadow2);}
+
+.st-vis{
+  aspect-ratio:4/3;position:relative;overflow:hidden;
+}
+.st-vis-inner{
+  position:absolute;inset:0;
+  transition:transform .7s var(--ease);
+}
+.st:hover .st-vis-inner{transform:scale(1.05);}
+
+/* Saree fabric backgrounds */
+.sv-banarasi{background:linear-gradient(155deg,#9B1B30 0%,#5A0010 100%);}
+.sv-banarasi::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(201,168,76,.18) 0,rgba(201,168,76,.18) 1.5px,transparent 1.5px,transparent 18px),
+  repeating-linear-gradient(-45deg,rgba(201,168,76,.18) 0,rgba(201,168,76,.18) 1.5px,transparent 1.5px,transparent 18px);}
+.sv-kanjivaram{background:linear-gradient(135deg,#0D3557 0%,#1A5C8B 100%);}
+.sv-kanjivaram::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,rgba(201,168,76,.2) 0,rgba(201,168,76,.2) 2px,transparent 2px,transparent 28px);}
+.sv-chanderi{background:linear-gradient(135deg,#2E7A38 0%,#1C5A26 100%);}
+.sv-chanderi::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.08) 0,rgba(255,255,255,.08) 1px,transparent 1px,transparent 20px);}
+.sv-patola{background:linear-gradient(135deg,#8B1A1A 0%,#C9922A 50%,#6A0D0D 100%);}
+.sv-patola::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(249,242,230,.12) 0,rgba(249,242,230,.12) 10px,rgba(201,168,76,.1) 10px,rgba(201,168,76,.1) 20px);}
+.sv-bandhani{background:radial-gradient(ellipse,#1C5C45 0%,#061E17 100%);}
+.sv-bandhani::after{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle 3px at 50% 50%,rgba(201,168,76,.45) 100%,transparent 100%);
+  background-size:22px 22px;}
+.sv-georgette{background:linear-gradient(135deg,#3C1060 0%,#5A1A90 100%);}
+.sv-silk{background:linear-gradient(135deg,#C9A84C 0%,#E8CB7A 50%,#A8841A 100%);}
+.sv-cotton{background:linear-gradient(135deg,#E8D5B0 0%,#DECA7A 100%);}
+.sv-cotton::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(30,18,10,.05) 0,rgba(30,18,10,.05) 1px,transparent 1px,transparent 12px),
+  repeating-linear-gradient(90deg,rgba(30,18,10,.05) 0,rgba(30,18,10,.05) 1px,transparent 1px,transparent 12px);}
+.sv-panetar{background:linear-gradient(155deg,#F5EDD8 0%,#E8D5B0 50%,#9B1B30 100%);}
+.sv-panetar::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(155,27,48,.1) 0,rgba(155,27,48,.1) 1px,transparent 1px,transparent 28px),
+  repeating-linear-gradient(90deg,rgba(201,168,76,.08) 0,rgba(201,168,76,.08) 1px,transparent 1px,transparent 28px);}
+
+.st-type{
+  position:absolute;top:12px;left:12px;
+  font-size:.62rem;font-weight:300;letter-spacing:.14em;
+  text-transform:uppercase;
+  background:rgba(250,247,242,.9);
+  color:var(--rose);border:1px solid var(--border2);
+  padding:4px 10px;
+}
+
+.st-body{padding:20px 22px 24px;}
+.st-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.25rem;font-weight:600;color:var(--ink);margin-bottom:6px;
+}
+.st-desc{font-size:.8rem;font-weight:300;line-height:1.7;color:var(--soft);margin-bottom:12px;}
+.st-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.stg{
+  font-size:.62rem;font-weight:300;letter-spacing:.1em;
+  color:var(--gold);background:var(--gold-pale);
+  border:1px solid rgba(184,145,42,.2);padding:3px 9px;
+}
+
+/* ─────────────── HISTORY PAGE ─────────────── */
+.quote-sec{
+  background:var(--rose);padding:72px 5%;text-align:center;
+}
+.quote-sec blockquote{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.3rem,3vw,1.9rem);font-weight:300;
+  color:rgba(255,255,255,.9);max-width:720px;margin:0 auto 20px;
+  line-height:1.65;
+}
+.quote-sec cite{
+  font-size:.7rem;font-weight:300;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(255,255,255,.5);
+  font-style:normal;
+}
+
+.tl-wrap{max-width:820px;margin:60px auto 0;position:relative;}
+.tl-spine{
+  position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,var(--gold),rgba(184,145,42,.1));
+  transform:translateX(-50%);
+}
+.tl-row{
+  display:grid;grid-template-columns:1fr 60px 1fr;
+  gap:0 20px;margin-bottom:48px;align-items:start;
+}
+.tl-card{
+  background:var(--white);border:1px solid var(--border);
+  padding:24px;transition:transform .4s var(--ease),box-shadow .4s,border-color .3s;
+}
+.tl-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--border2);}
+.tl-yr{
+  font-size:.62rem;font-weight:300;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:5px;
+}
+.tl-ttl{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;font-weight:600;color:var(--rose);margin-bottom:6px;
+}
+.tl-txt{font-size:.8rem;font-weight:300;line-height:1.7;color:var(--soft);}
+.tl-dot-col{display:flex;justify-content:center;align-items:flex-start;padding-top:20px;}
+.tl-dot{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--white);border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:.72rem;
+  font-weight:600;color:var(--rose);
+  box-shadow:0 0 0 4px var(--bg);position:relative;z-index:2;flex-shrink:0;
+}
+.tl-blank{visibility:hidden;}
+/* odd left, even right */
+.tl-row:nth-child(odd)  .tl-card{grid-column:1;}
+.tl-row:nth-child(odd)  .tl-dot-col{grid-column:2;}
+.tl-row:nth-child(odd)  .tl-blank{grid-column:3;grid-row:1;}
+.tl-row:nth-child(even) .tl-blank{grid-column:1;}
+.tl-row:nth-child(even) .tl-dot-col{grid-column:2;grid-row:1;}
+.tl-row:nth-child(even) .tl-card{grid-column:3;grid-row:1;}
+
+.founders-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;
+}
+.fc{
+  background:var(--white);border:1px solid var(--border);
+  padding:40px 28px;text-align:center;
+  transition:transform .4s var(--ease),box-shadow .4s;
+}
+.fc:hover{transform:translateY(-5px);box-shadow:var(--shadow2);}
+.fc-av{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--rose),var(--rose-lt));
+  border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;font-weight:600;font-style:italic;color:rgba(255,255,255,.9);
+}
+.fc-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-weight:600;color:var(--ink);margin-bottom:3px;
+}
+.fc-role{
+  font-size:.62rem;font-weight:300;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:12px;
+}
+.fc-bio{font-size:.8rem;font-weight:300;line-height:1.7;color:var(--soft);}
+
+/* ─────────────── LOCATION PAGE ─────────────── */
+.loc-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:40px;max-width:1200px;margin:0 auto;
+  padding:0 5% 96px;align-items:start;
+}
+.map-box{
+  border:1px solid var(--border2);overflow:hidden;
+  box-shadow:var(--shadow);position:sticky;top:100px;
+}
+.map-box iframe{width:100%;height:440px;border:0;display:block;}
+.loc-cards{display:flex;flex-direction:column;gap:16px;}
+.lc{
+  background:var(--white);border:1px solid var(--border);
+  padding:26px;transition:border-color .3s,transform .3s var(--ease),box-shadow .3s;
+  position:relative;overflow:hidden;
+}
+.lc::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;
+  background:var(--rose);transform:scaleY(0);transform-origin:bottom;
+  transition:transform .4s var(--ease);
+}
+.lc:hover{border-color:var(--border2);transform:translateX(4px);box-shadow:var(--shadow);}
+.lc:hover::before{transform:scaleY(1);}
+.lc-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.lc-icon{
+  width:40px;height:40px;background:var(--gold-pale);
+  border:1px solid rgba(184,145,42,.25);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;
+}
+.lc-head h4{
+  font-size:.65rem;font-weight:400;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--mid);
+}
+.lc-body{padding-left:52px;font-size:.85rem;font-weight:300;line-height:1.8;color:var(--soft);}
+.lc-body a{color:var(--rose);font-weight:400;transition:opacity .2s;}
+.lc-body a:hover{opacity:.75;}
+.lc-body address{font-style:normal;}
+.hrs-tbl{width:100%;border-collapse:collapse;font-size:.82rem;}
+.hrs-tbl tr{border-bottom:1px solid var(--border);}
+.hrs-tbl tr:last-child{border:none;}
+.hrs-tbl td{padding:8px 0;font-weight:300;color:var(--soft);}
+.hrs-tbl .day{font-weight:400;color:var(--mid);}
+.hrs-tbl .closed{color:var(--rose);}
+
+/* ─────────────── CONTACT PAGE ─────────────── */
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1.5fr;
+  gap:48px;max-width:1200px;margin:0 auto;
+  padding:0 5% 96px;align-items:start;
+}
+.ct-info{display:flex;flex-direction:column;gap:14px;}
+.ct-tile{
+  background:var(--white);border:1px solid var(--border);
+  padding:22px;display:flex;align-items:flex-start;gap:14px;
+  transition:transform .35s var(--ease),box-shadow .35s,border-color .3s;
+}
+.ct-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--border2);}
+.ct-ico{
+  width:44px;height:44px;background:var(--rose);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--white);flex-shrink:0;
+}
+.ct-bd h4{
+  font-size:.62rem;font-weight:300;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--soft);margin-bottom:4px;
+}
+.ct-bd p,.ct-bd a{font-size:.88rem;font-weight:300;color:var(--mid);line-height:1.65;}
+.ct-bd a{color:var(--rose);transition:opacity .2s;}
+.ct-bd a:hover{opacity:.75;}
+
+.soc-row{display:flex;gap:8px;margin-top:5px;}
+.sb{
+  width:38px;height:38px;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;transition:all .3s var(--ease);
+}
+.sb:hover{background:var(--rose);border-color:var(--rose);transform:translateY(-2px);}
+
+.form-box{
+  background:var(--white);border:1px solid var(--border);padding:44px 40px;
+  position:relative;overflow:hidden;
+}
+.form-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--rose),var(--gold),var(--rose));
+}
+.form-box h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.75rem;font-weight:400;font-style:italic;color:var(--ink);margin-bottom:4px;
+}
+.form-box>p{font-size:.82rem;font-weight:300;color:var(--soft);margin-bottom:32px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.fg label{
+  font-size:.62rem;font-weight:400;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--mid);
+}
+.fg input,.fg select,.fg textarea{
+  border:1px solid rgba(184,145,42,.25);padding:12px 14px;
+  font-family:'Jost',sans-serif;font-size:.88rem;font-weight:300;
+  color:var(--ink);background:var(--bg);outline:none;-webkit-appearance:none;
+  transition:border-color .3s,box-shadow .3s,background .3s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--gold);background:var(--white);
+  box-shadow:0 0 0 3px rgba(184,145,42,.09);
+}
+.fg textarea{resize:vertical;min-height:110px;}
+.f-btn{
+  width:100%;font-family:'Jost',sans-serif;font-size:.7rem;
+  font-weight:400;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--white);background:var(--rose);padding:15px;
+  border:none;cursor:pointer;margin-top:4px;
+  transition:background .3s,transform .25s var(--spring);
+}
+.f-btn:hover{background:var(--rose-lt);transform:translateY(-1px);}
+.f-success{display:none;flex-direction:column;align-items:center;text-align:center;padding:48px 20px;gap:12px;}
+.f-success.show{display:flex;}
+.fs-icon{font-size:2.5rem;}
+.fs-t{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-style:italic;color:var(--rose);}
+.fs-sub{font-size:.84rem;font-weight:300;color:var(--soft);}
+.fs-back{
+  font-size:.68rem;font-weight:400;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--rose);border:1px solid var(--border2);padding:10px 22px;
+  cursor:pointer;margin-top:10px;transition:all .3s;
+}
+.fs-back:hover{background:var(--rose);color:var(--white);border-color:var(--rose);}
+
+/* ─────────────── FOOTER ─────────────── */
+footer{background:var(--ink);color:rgba(250,247,242,.5);}
+.ft-cta{
+  background:var(--rose);padding:44px 5%;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+}
+.ft-cta-txt{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.35rem;font-weight:300;color:rgba(255,255,255,.9);
+}
+.ft-cta-btn{
+  font-size:.68rem;font-weight:400;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--rose);background:var(--gold-pale);
+  padding:12px 28px;cursor:pointer;white-space:nowrap;
+  transition:background .3s;
+}
+.ft-cta-btn:hover{background:var(--gold-lt);}
+
+.ft-main{
+  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;
+  gap:40px;padding:64px 5% 52px;max-width:1400px;margin:0 auto;
+}
+.ft-brand p{font-size:.8rem;font-weight:300;line-height:1.8;max-width:260px;margin:14px 0 20px;}
+.ft-logo-n{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.5rem;font-weight:600;color:rgba(250,247,242,.85);cursor:pointer;
+}
+.ft-logo-t{
+  font-size:.6rem;font-weight:300;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--gold);display:block;margin-top:1px;
+}
+.ft-col h5{
+  font-size:.6rem;font-weight:300;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:18px;
+}
+.ft-col ul{display:flex;flex-direction:column;gap:9px;}
+.ft-col ul li a{
+  font-size:.8rem;font-weight:300;color:rgba(250,247,242,.4);
+  cursor:pointer;transition:color .3s;
+}
+.ft-col ul li a:hover{color:rgba(250,247,242,.8);}
+.ft-ci{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.ft-ci span{font-size:.8rem;font-weight:300;line-height:1.65;color:rgba(250,247,242,.4);}
+.ft-ci a{color:rgba(250,247,242,.4);transition:color .3s;}
+.ft-ci a:hover{color:rgba(250,247,242,.8);}
+.ft-div{height:1px;background:rgba(250,247,242,.07);max-width:1400px;margin:0 auto;}
+.ft-bot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 5%;max-width:1400px;margin:0 auto;flex-wrap:wrap;gap:12px;
+}
+.ft-bot p{font-size:.7rem;font-weight:300;color:rgba(250,247,242,.22);}
+.ft-bot .gc{color:var(--gold);}
+.ft-soc{display:flex;gap:8px;}
+.fsl{
+  width:32px;height:32px;border:1px solid rgba(250,247,242,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;color:rgba(250,247,242,.28);
+  cursor:pointer;transition:all .3s;
+}
+.fsl:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px);}
+
+/* ─────────────── SCROLL TOP ─────────────── */
+.stt{
+  position:fixed;bottom:24px;right:24px;
+  width:42px;height:42px;background:var(--rose);color:var(--white);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  box-shadow:0 4px 20px rgba(139,38,53,.3);z-index:900;
+  opacity:0;pointer-events:none;cursor:pointer;
+  transition:opacity .35s,transform .35s var(--spring);transform:translateY(8px);
+}
+.stt.vis{opacity:1;pointer-events:all;transform:translateY(0);}
+.stt:hover{transform:translateY(-2px)!important;background:var(--rose-lt);}
+
+/* ─────────────── RESPONSIVE ─────────────── */
+
+/* Tablet ≤1024 */
+@media(max-width:1024px){
+  .pillars-grid{grid-template-columns:1fr 1fr;}
+  .saree-grid{grid-template-columns:repeat(2,1fr);}
+  .ft-main{grid-template-columns:1fr 1fr;gap:32px;}
+  .founders-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* Tablet/large mobile ≤768 */
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:80px;}
+  .hero::after{display:none;}
+  .hero-right{padding:0 5% 60px;min-height:auto;}
+  .hero-panels{height:280px;width:100%;}
+  .hero-badge{display:none;}
+  .about-split{grid-template-columns:1fr;}
+  .about-vis{aspect-ratio:16/7;min-height:0;}
+  .testi-grid{grid-template-columns:1fr;}
+  .tl-spine{display:none;}
+  .tl-row{grid-template-columns:40px 1fr;gap:0 12px;}
+  .tl-row .tl-card,.tl-row:nth-child(odd) .tl-card,.tl-row:nth-child(even) .tl-card{grid-column:2;text-align:left;}
+  .tl-row .tl-dot-col,.tl-row:nth-child(odd) .tl-dot-col,.tl-row:nth-child(even) .tl-dot-col{grid-column:1;grid-row:1;}
+  .tl-blank{display:none;}
+  .loc-grid{grid-template-columns:1fr;padding:0 5% 64px;}
+  .map-box{position:static;}
+  .contact-grid{grid-template-columns:1fr;padding:0 5% 64px;gap:32px;}
+  nav{display:none;}
+  .hbg{display:flex;}
+  .testi-grid{grid-template-columns:1fr 1fr;}
+  .founders-grid{grid-template-columns:1fr;}
+}
+
+/* Mobile ≤600 */
+@media(max-width:600px){
+  .sec{padding:64px 4%;}
+  .hero-left{padding:60px 4% 40px;}
+  .hero-right{padding:0 4% 48px;}
+  .hero-panels{height:220px;}
+  .hero-nums{gap:20px;flex-wrap:wrap;}
+  .about-content{padding:48px 4%;}
+  .about-stats{gap:24px;}
+  .pillars-grid{grid-template-columns:1fr;}
+  .saree-grid{grid-template-columns:1fr;}
+  .testi-grid{grid-template-columns:1fr;}
+  .founders-grid{grid-template-columns:1fr;}
+  .fr{grid-template-columns:1fr;}
+  .form-box{padding:28px 20px;}
+  .ft-main{grid-template-columns:1fr;padding:48px 4% 40px;}
+  .ft-cta{flex-direction:column;text-align:center;}
+  .loc-grid{padding:0 4% 64px;}
+  .contact-grid{padding:0 4% 64px;}
+  .pg-hero{padding:140px 4% 60px;}
+}
+
+/* Small mobile ≤380 */
+@media(max-width:380px){
+  .hero-h1{font-size:2.8rem;}
+  .hero-btns{flex-direction:column;}
+  .btn-p,.btn-o{text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header id="hd">
+  <div class="hd-top">
+    ✦ &nbsp; Visit us · Shop 12, Silk Bazaar, Ahmedabad &nbsp; · &nbsp;
+    <a href="tel:+919876543210">+91 98765 43210</a> &nbsp; ✦
+  </div>
+  <div class="hd-bar">
+    <div class="logo" onclick="go('home')">
+      <span class="logo-name">Panetar</span>
+      <span class="logo-tag">House of Sacred Sarees · Est. 1978</span>
+    </div>
+    <nav>
+      <span class="nk on" id="n-home"    onclick="go('home')">Home</span>
+      <span class="nk"    id="n-sarees"  onclick="go('sarees')">Collection</span>
+      <span class="nk"    id="n-history" onclick="go('history')">Our Story</span>
+      <span class="nk"    id="n-location" onclick="go('location')">Visit</span>
+      <span class="nk"    id="n-contact" onclick="go('contact')">Contact</span>
+      <span class="nk nk-cta" onclick="go('contact')">Enquire</span>
+    </nav>
+    <div class="hbg" id="hbg" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="mob" id="mob">
+    <span class="nk" onclick="go('home');toggleMob()">Home</span>
+    <span class="nk" onclick="go('sarees');toggleMob()">Collection</span>
+    <span class="nk" onclick="go('history');toggleMob()">Our Story</span>
+    <span class="nk" onclick="go('location');toggleMob()">Visit</span>
+    <span class="nk" onclick="go('contact');toggleMob()">Contact</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════
+     HOME
+═══════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-chip">Ahmedabad · Est. 1978</div>
+      <h1 class="hero-h1">
+        <span>The Art of</span>
+        <span>the <em>Sacred</em></span>
+        <span>Drape</span>
+      </h1>
+      <p class="hero-p">Where each saree is not merely fabric — it is a story woven in silk, zari, and generations of devotion.</p>
+      <div class="hero-btns">
+        <button class="btn-p" onclick="go('sarees')">Explore Collection</button>
+        <button class="btn-o" onclick="go('history')">Our Heritage</button>
+      </div>
+      <div class="hero-nums">
+        <div><div class="hn-n">45+</div><div class="hn-l">Years</div></div>
+        <div><div class="hn-n">12+</div><div class="hn-l">Varieties</div></div>
+        <div><div class="hn-n">10K+</div><div class="hn-l">Families</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-panels">
+        <div class="hp hp-1">
+          <div class="hp-inner"></div>
+          <span class="hp-lbl">Banarasi Silk</span>
+        </div>
+        <div class="hp hp-2">
+          <div class="hp-inner"></div>
+          <span class="hp-lbl hp-lbl-dk">Panetar · Ivory</span>
+        </div>
+        <div class="hp hp-3">
+          <div class="hp-inner"></div>
+          <span class="hp-lbl">Kanjivaram</span>
+        </div>
+      </div>
+      <div class="hero-badge">
+        <div class="hb-n">1978</div>
+        <div class="hb-l">Est. in Ahmedabad</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="mq">
+    <div class="mq-track">
+      <span class="mq-item">Banarasi Silk<span class="mq-dot"></span></span>
+      <span class="mq-item">Kanjivaram<span class="mq-dot"></span></span>
+      <span class="mq-item">Panetar<span class="mq-dot"></span></span>
+      <span class="mq-item">Patola<span class="mq-dot"></span></span>
+      <span class="mq-item">Bandhani<span class="mq-dot"></span></span>
+      <span class="mq-item">Chanderi<span class="mq-dot"></span></span>
+      <span class="mq-item">Pure Silk<span class="mq-dot"></span></span>
+      <span class="mq-item">Georgette<span class="mq-dot"></span></span>
+      <span class="mq-item">Cotton Weaves<span class="mq-dot"></span></span>
+      <span class="mq-item">Banarasi Silk<span class="mq-dot"></span></span>
+      <span class="mq-item">Kanjivaram<span class="mq-dot"></span></span>
+      <span class="mq-item">Panetar<span class="mq-dot"></span></span>
+      <span class="mq-item">Patola<span class="mq-dot"></span></span>
+      <span class="mq-item">Bandhani<span class="mq-dot"></span></span>
+      <span class="mq-item">Chanderi<span class="mq-dot"></span></span>
+      <span class="mq-item">Pure Silk<span class="mq-dot"></span></span>
+      <span class="mq-item">Georgette<span class="mq-dot"></span></span>
+      <span class="mq-item">Cotton Weaves<span class="mq-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- About split -->
+  <div class="about-split">
+    <div class="about-vis">
+      <div class="about-vis-inner"></div>
+      <div class="about-ring">
+        <span class="about-ring-txt">Since<br>1978</span>
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="rv">
+        <div class="eyebrow"><div class="eb-line"></div>About the House</div>
+        <h2 class="h2">Woven in <em>Tradition,</em><br>Draped in Grace</h2>
+        <div class="rule"><div class="rl"></div><div class="rd"></div><div class="rl rev"></div></div>
+      </div>
+      <p class="lead-p rv d1">"Panetar is the first promise a woman makes to the life she is about to begin."</p>
+      <p class="body-p rv d2">For over 45 years, our atelier has been Ahmedabad's most trusted destination for handwoven sarees, each chosen for its soul — not just its price.</p>
+      <div class="about-stats rv d3">
+        <div><div class="as-n">45+</div><div class="as-l">Years of Legacy</div></div>
+        <div><div class="as-n">12+</div><div class="as-l">Saree Varieties</div></div>
+        <div><div class="as-n">3</div><div class="as-l">Generations</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pillars -->
+  <section class="sec pillars">
+    <div class="wrap center">
+      <div class="rv">
+        <div class="eyebrow eyebrow-c"><div class="eb-line"></div>Why Panetar<div class="eb-line"></div></div>
+        <h2 class="h2">Craftsmanship at the <em>Heart</em></h2>
+        <div class="rule rule-c"><div class="rl"></div><div class="rd"></div><div class="rl rev"></div></div>
+      </div>
+      <div class="pillars-grid">
+        <div class="pc rv">
+          <span class="pc-icon">🧵</span>
+          <div class="pc-n">Handwoven Authenticity</div>
+          <p class="pc-t">Every piece sourced directly from master weavers. No middlemen — only pure craft passed through generations.</p>
+        </div>
+        <div class="pc rv d1">
+          <span class="pc-icon">✦</span>
+          <div class="pc-n">Curated Excellence</div>
+          <p class="pc-t">We travel to Varanasi, Kanchipuram, and Patan twice a year to bring only the finest sarees to Ahmedabad.</p>
+        </div>
+        <div class="pc rv d2">
+          <span class="pc-icon">💎</span>
+          <div class="pc-n">Uncompromised Quality</div>
+          <p class="pc-t">From the texture of the zari to the integrity of the weave, we accept nothing short of perfection.</p>
+        </div>
+        <div class="pc rv d3">
+          <span class="pc-icon">🤝</span>
+          <div class="pc-n">Expert Guidance</div>
+          <p class="pc-t">Our staff of textile connoisseurs helps you find the perfect drape for every occasion in life.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="sec" style="background:var(--bg2)">
+    <div class="wrap center">
+      <div class="rv">
+        <div class="eyebrow eyebrow-c"><div class="eb-line"></div>Testimonials<div class="eb-line"></div></div>
+        <h2 class="h2">Words of Our <em>Cherished Patrons</em></h2>
+        <div class="rule rule-c"><div class="rl"></div><div class="rd"></div><div class="rl rev"></div></div>
+      </div>
+      <div class="testi-grid">
+        <div class="tc rv">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-q">"My bridal Panetar saree was everything I dreamed — ivory silk, red border, sheer perfection. No other saree will ever compare."</p>
+          <div class="tc-name">Priya Sharma</div>
+          <div class="tc-loc">Ahmedabad</div>
+        </div>
+        <div class="tc rv d1">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-q">"Three generations of our family have trusted Panetar. My grandmother in 1982, my mother, and now me. The quality is eternal."</p>
+          <div class="tc-name">Meena Patel</div>
+          <div class="tc-loc">Gandhinagar</div>
+        </div>
+        <div class="tc rv d2">
+          <div class="tc-stars">★★★★★</div>
+          <p class="tc-q">"Walking into this store is an experience. The knowledge, the atmosphere — it feels like entering a world of living art."</p>
+          <div class="tc-name">Sunita Desai</div>
+          <div class="tc-loc">Surat</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /home -->
+
+<!-- ═══════════════════════════════
+     SAREES
+═══════════════════════════════ -->
+<div id="page-sarees" class="page">
+  <div class="pg-hero">
+    <div class="eyebrow"><div class="eb-line"></div>The Collection</div>
+    <h1 class="h2">India's Finest Sarees,<br><em>Brought to You</em></h1>
+    <p class="body-p">From the sacred Panetar to rare Patola — every weave tells a story of devotion.</p>
+  </div>
+
+  <section class="sec" style="padding-top:56px">
+    <div class="wrap">
+      <div class="filter-row">
+        <span class="fl-lbl">Filter —</span>
+        <button class="fb on" onclick="flt(this,'all')">All</button>
+        <button class="fb" onclick="flt(this,'silk')">Silk</button>
+        <button class="fb" onclick="flt(this,'bridal')">Bridal</button>
+        <button class="fb" onclick="flt(this,'traditional')">Traditional</button>
+        <button class="fb" onclick="flt(this,'cotton')">Cotton</button>
+        <button class="fb" onclick="flt(this,'designer')">Designer</button>
+      </div>
+
+      <div class="saree-grid" id="sgrid">
+
+        <div class="st" data-c="bridal silk traditional">
+          <div class="st-vis"><div class="st-vis-inner sv-panetar"></div><span class="st-type">Signature</span></div>
+          <div class="st-body">
+            <div class="st-name">Panetar</div>
+            <p class="st-desc">The sacred Gujarati bridal saree — ivory white with red borders, worn on the most auspicious day of a woman's life.</p>
+            <div class="st-tags"><span class="stg">Bridal</span><span class="stg">Gujarati</span><span class="stg">Sacred</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="silk bridal traditional">
+          <div class="st-vis"><div class="st-vis-inner sv-banarasi"></div><span class="st-type">Varanasi</span></div>
+          <div class="st-body">
+            <div class="st-name">Banarasi Silk</div>
+            <p class="st-desc">Pure silk woven with intricate gold and silver zari from the sacred looms of Varanasi. The eternal bridal choice.</p>
+            <div class="st-tags"><span class="stg">Silk</span><span class="stg">Zari</span><span class="stg">Bridal</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="silk bridal">
+          <div class="st-vis"><div class="st-vis-inner sv-kanjivaram"></div><span class="st-type">Kanchipuram</span></div>
+          <div class="st-body">
+            <div class="st-name">Kanjivaram</div>
+            <p class="st-desc">South India's royal silk — vivid colours, temple motifs, dramatic contrast borders draped by queens and brides alike.</p>
+            <div class="st-tags"><span class="stg">Silk</span><span class="stg">Bridal</span><span class="stg">Temple Motif</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="silk traditional bridal">
+          <div class="st-vis"><div class="st-vis-inner sv-patola"></div><span class="st-type">Patan · Gujarat</span></div>
+          <div class="st-body">
+            <div class="st-name">Patola</div>
+            <p class="st-desc">Gujarat's most precious textile — double ikat woven by hand over months. Each piece is a masterwork of geometry and colour.</p>
+            <div class="st-tags"><span class="stg">Heritage</span><span class="stg">Ikat</span><span class="stg">Rare</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="traditional designer">
+          <div class="st-vis"><div class="st-vis-inner sv-bandhani"></div><span class="st-type">Gujarat</span></div>
+          <div class="st-body">
+            <div class="st-name">Bandhani</div>
+            <p class="st-desc">Thousands of tiny pinched knots creating divine patterns of colour and light. The soul of Gujarat in every drape.</p>
+            <div class="st-tags"><span class="stg">Festival</span><span class="stg">Traditional</span><span class="stg">Tie-Dye</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="cotton traditional">
+          <div class="st-vis"><div class="st-vis-inner sv-chanderi"></div><span class="st-type">Madhya Pradesh</span></div>
+          <div class="st-body">
+            <div class="st-name">Chanderi</div>
+            <p class="st-desc">Feather-light silk-cotton blend with natural lustre and translucent grace — elegant for every occasion.</p>
+            <div class="st-tags"><span class="stg">Lightweight</span><span class="stg">Everyday</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="designer">
+          <div class="st-vis"><div class="st-vis-inner sv-georgette"></div><span class="st-type">Designer</span></div>
+          <div class="st-body">
+            <div class="st-name">Georgette</div>
+            <p class="st-desc">Flowing, versatile, intoxicating. Georgette sarees with heavy embroidery for the modern celebration.</p>
+            <div class="st-tags"><span class="stg">Modern</span><span class="stg">Embroidered</span><span class="stg">Party</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="silk bridal designer">
+          <div class="st-vis"><div class="st-vis-inner sv-silk"></div><span class="st-type">Pure Silk</span></div>
+          <div class="st-body">
+            <div class="st-name">Pure Silk</div>
+            <p class="st-desc">Luminous, smooth, and utterly luxurious. Our certified pure silk sarees represent the zenith of Indian textile craft.</p>
+            <div class="st-tags"><span class="stg">Luxury</span><span class="stg">Silk</span><span class="stg">Occasions</span></div>
+          </div>
+        </div>
+
+        <div class="st" data-c="cotton">
+          <div class="st-vis"><div class="st-vis-inner sv-cotton"></div><span class="st-type">Handwoven</span></div>
+          <div class="st-body">
+            <div class="st-name">Cotton Weaves</div>
+            <p class="st-desc">Breathable, handwoven, and beautifully crafted. Our cotton sarees carry the warmth and honesty of daily India.</p>
+            <div class="st-tags"><span class="stg">Daily Wear</span><span class="stg">Comfort</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div><!-- /sarees -->
+
+<!-- ═══════════════════════════════
+     HISTORY
+═══════════════════════════════ -->
+<div id="page-history" class="page">
+  <div class="pg-hero">
+    <div class="eyebrow"><div class="eb-line"></div>Est. 1978</div>
+    <h1 class="h2">A Legacy Woven Over<br><em>Four Decades</em></h1>
+    <p class="body-p">From a single suitcase of sarees to Ahmedabad's most beloved textile house — the Panetar story.</p>
+  </div>
+
+  <div class="quote-sec">
+    <blockquote>"My father started this with nothing but an eye for beauty and a belief that every woman deserves to wear something sacred."</blockquote>
+    <cite>— Rajiv Shah, Second-Generation Custodian</cite>
+  </div>
+
+  <section class="sec" style="background:var(--bg2)">
+    <div class="wrap center">
+      <div class="rv">
+        <div class="eyebrow eyebrow-c"><div class="eb-line"></div>Our Journey<div class="eb-line"></div></div>
+        <h2 class="h2">Milestones That <em>Define Us</em></h2>
+        <div class="rule rule-c"><div class="rl"></div><div class="rd"></div><div class="rl rev"></div></div>
+      </div>
+      <div class="tl-wrap">
+        <div class="tl-spine"></div>
+
+        <div class="tl-row rv">
+          <div class="tl-card"><div class="tl-yr">1978</div><div class="tl-ttl">The First Saree</div><p class="tl-txt">Ramanlal Shah opens a 200 sq.ft. shop in Kalupur with sarees sourced on a personal journey through India's weaving villages.</p></div>
+          <div class="tl-dot-col"><div class="tl-dot">78</div></div>
+          <div class="tl-blank"></div>
+        </div>
+
+        <div class="tl-row rv d1">
+          <div class="tl-blank"></div>
+          <div class="tl-dot-col"><div class="tl-dot">85</div></div>
+          <div class="tl-card"><div class="tl-yr">1985</div><div class="tl-ttl">South India Calls</div><p class="tl-txt">The first journey to Kanchipuram establishes direct weaver relationships. Kanjivaram silks join the collection.</p></div>
+        </div>
+
+        <div class="tl-row rv">
+          <div class="tl-card"><div class="tl-yr">1994</div><div class="tl-ttl">The House is Born</div><p class="tl-txt">Panetar moves into its iconic Silk Bazaar premises — a showroom with the space and grandeur the collection deserves.</p></div>
+          <div class="tl-dot-col"><div class="tl-dot">94</div></div>
+          <div class="tl-blank"></div>
+        </div>
+
+        <div class="tl-row rv d1">
+          <div class="tl-blank"></div>
+          <div class="tl-dot-col"><div class="tl-dot">02</div></div>
+          <div class="tl-card"><div class="tl-yr">2002</div><div class="tl-ttl">A New Generation</div><p class="tl-txt">Rajiv Shah takes the helm, bringing a modern eye for curation while honouring every thread of his father's vision.</p></div>
+        </div>
+
+        <div class="tl-row rv">
+          <div class="tl-card"><div class="tl-yr">Today</div><div class="tl-ttl">The Journey Continues</div><p class="tl-txt">Over 10,000 families served, 12 saree varieties, three generations — and a story still being written thread by thread.</p></div>
+          <div class="tl-dot-col"><div class="tl-dot">✦</div></div>
+          <div class="tl-blank"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" style="background:var(--white)">
+    <div class="wrap center">
+      <div class="rv">
+        <div class="eyebrow eyebrow-c"><div class="eb-line"></div>The Family<div class="eb-line"></div></div>
+        <h2 class="h2">Faces Behind the <em>Legacy</em></h2>
+        <div class="rule rule-c"><div class="rl"></div><div class="rd"></div><div class="rl rev"></div></div>
+      </div>
+      <div class="founders-grid">
+        <div class="fc rv">
+          <div class="fc-av">RS</div>
+          <div class="fc-name">Ramanlal Shah</div>
+          <div class="fc-role">Founder · Visionary</div>
+          <p class="fc-bio">Started Panetar with an unshakeable belief that every woman deserves access to India's most beautiful textiles.</p>
+        </div>
+        <div class="fc rv d1">
+          <div class="fc-av">RJ</div>
+          <div class="fc-name">Rajiv Shah</div>
+          <div class="fc-role">Owner · Director</div>
+          <p class="fc-bio">Second-generation custodian who blends reverence for tradition with a modern approach to excellence.</p>
+        </div>
+        <div class="fc rv d2">
+          <div class="fc-av">PS</div>
+          <div class="fc-name">Priti Shah</div>
+          <div class="fc-role">Head of Curation</div>
+          <p class="fc-bio">Travels across India's weaving clusters twice a year to ensure every piece meets the standard of the Panetar name.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /history -->
+
+<!-- ═══════════════════════════════
+     LOCATION
+═══════════════════════════════ -->
+<div id="page-location" class="page">
+  <div class="pg-hero">
+    <div class="eyebrow"><div class="eb-line"></div>Find Us</div>
+    <h1 class="h2">Visit Our <em>Atelier</em></h1>
+    <p class="body-p">Come in and let the sarees speak to you. No catalogue can replace the experience of touching the fabric.</p>
+  </div>
+
+  <section class="sec" style="padding-top:56px">
+    <div class="loc-grid">
+      <div class="map-box rv">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.78!2d72.5870!3d23.0225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848d21b16521%3A0xabc!2sKalupur%2C+Ahmedabad!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+          allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Panetar Store Location">
+        </iframe>
+      </div>
+      <div class="loc-cards">
+        <div class="lc rv">
+          <div class="lc-head"><div class="lc-icon">📍</div><h4>Address</h4></div>
+          <div class="lc-body"><address>Shop No. 12, Silk Bazaar,<br>Near Gandhi Road, Kalupur,<br>Ahmedabad, Gujarat — 380 001<br><br><a href="https://maps.google.com/?q=Kalupur+Ahmedabad" target="_blank">Open in Google Maps →</a></address></div>
+        </div>
+        <div class="lc rv d1">
+          <div class="lc-head"><div class="lc-icon">🕐</div><h4>Store Hours</h4></div>
+          <div class="lc-body">
+            <table class="hrs-tbl">
+              <tr><td class="day">Mon – Fri</td><td>10:00 AM – 8:00 PM</td></tr>
+              <tr><td class="day">Saturday</td><td>10:00 AM – 9:00 PM</td></tr>
+              <tr><td class="day">Sunday</td><td>11:00 AM – 7:00 PM</td></tr>
+              <tr><td class="day">Public Holidays</td><td class="closed">Closed</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="lc rv d2">
+          <div class="lc-head"><div class="lc-icon">📞</div><h4>Contact</h4></div>
+          <div class="lc-body"><p>
+            <strong>Phone:</strong> <a href="tel:+919876543210">+91 98765 43210</a><br>
+            <strong>WhatsApp:</strong> <a href="https://wa.me/919876543210" target="_blank">+91 98765 43210</a><br>
+            <strong>Email:</strong> <a href="mailto:info@panetar.in">info@panetar.in</a>
+          </p></div>
+        </div>
+        <div class="lc rv d3">
+          <div class="lc-head"><div class="lc-icon">🚌</div><h4>Getting Here</h4></div>
+          <div class="lc-body"><p>
+            🚌 &nbsp;AMTS Bus — Kalupur Stop (2 min walk)<br>
+            🚇 &nbsp;Metro — Kalupur Station (5 min walk)<br>
+            🚗 &nbsp;Parking available at Silk Bazaar complex
+          </p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /location -->
+
+<!-- ═══════════════════════════════
+     CONTACT
+═══════════════════════════════ -->
+<div id="page-contact" class="page">
+  <div class="pg-hero">
+    <div class="eyebrow"><div class="eb-line"></div>Get in Touch</div>
+    <h1 class="h2">We'd Love to <em>Hear</em> From You</h1>
+    <p class="body-p">Bridal consultations, saree enquiries, or simply wanting to talk textiles — we are always here.</p>
+  </div>
+
+  <section class="sec" style="padding-top:56px">
+    <div class="contact-grid">
+      <div class="ct-info">
+        <div class="ct-tile rv">
+          <div class="ct-ico">📞</div>
+          <div class="ct-bd"><h4>Phone</h4><p><a href="tel:+919876543210">+91 98765 43210</a><br><a href="tel:+917940012345">+91 79 4001 2345</a></p></div>
+        </div>
+        <div class="ct-tile rv d1">
+          <div class="ct-ico">📧</div>
+          <div class="ct-bd"><h4>Email</h4><p><a href="mailto:info@panetar.in">info@panetar.in</a><br><a href="mailto:bridal@panetar.in">bridal@panetar.in</a></p></div>
+        </div>
+        <div class="ct-tile rv d2">
+          <div class="ct-ico">💬</div>
+          <div class="ct-bd"><h4>WhatsApp</h4><p><a href="https://wa.me/919876543210" target="_blank">+91 98765 43210</a><br><span style="font-size:.75rem;color:var(--soft)">Mon–Sat · 10 AM – 8 PM</span></p></div>
+        </div>
+        <div class="ct-tile rv d3">
+          <div class="ct-ico">📍</div>
+          <div class="ct-bd"><h4>Store</h4><p>Shop 12, Silk Bazaar,<br>Kalupur, Ahmedabad 380 001</p></div>
+        </div>
+        <div class="ct-tile rv d4">
+          <div class="ct-ico">🌐</div>
+          <div class="ct-bd">
+            <h4>Follow Us</h4>
+            <div class="soc-row">
+              <div class="sb" title="Instagram">📷</div>
+              <div class="sb" title="Facebook">📘</div>
+              <div class="sb" title="YouTube">▶️</div>
+              <div class="sb" title="Pinterest">📌</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-box rv">
+        <div id="fform">
+          <h3>Send a Message</h3>
+          <p>We reply within one business day.</p>
+          <div class="fr">
+            <div class="fg"><label>First Name</label><input type="text" id="fn" placeholder="Priya"/></div>
+            <div class="fg"><label>Last Name</label><input type="text" id="ln" placeholder="Sharma"/></div>
+          </div>
+          <div class="fg"><label>Email</label><input type="email" id="em" placeholder="you@email.com"/></div>
+          <div class="fg"><label>Phone</label><input type="tel" id="ph" placeholder="+91 00000 00000"/></div>
+          <div class="fg">
+            <label>Topic</label>
+            <select id="sb">
+              <option value="" disabled selected>Select a topic</option>
+              <option>Bridal Consultation</option>
+              <option>Saree Enquiry</option>
+              <option>Bulk Order</option>
+              <option>Store Visit Appointment</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Message</label><textarea id="msg" placeholder="How can we help you?"></textarea></div>
+          <button class="f-btn" onclick="sendForm()">Send Message ✦</button>
+        </div>
+        <div class="f-success" id="fsuc">
+          <span class="fs-icon">🌸</span>
+          <div class="fs-t">Thank You</div>
+          <p class="fs-sub">Your message has reached us. We'll be in touch within one business day.</p>
+          <button class="fs-back" onclick="resetForm()">Send Another Message</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /contact -->
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="ft-cta">
+    <span class="ft-cta-txt">"Come visit us and experience India's finest sarees in person."</span>
+    <button class="ft-cta-btn" onclick="go('location')">Find Our Store</button>
+  </div>
+  <div class="ft-main">
+    <div class="ft-brand">
+      <div onclick="go('home')" style="cursor:pointer">
+        <span class="ft-logo-n">Panetar</span>
+        <span class="ft-logo-t">House of Sacred Sarees · Est. 1978</span>
+      </div>
+      <p>For over 45 years, Panetar has carried India's most treasured textile traditions to the families of Ahmedabad.</p>
+      <div class="ft-ci"><span>📞</span><span><a href="tel:+919876543210">+91 98765 43210</a></span></div>
+      <div class="ft-ci"><span>📧</span><span><a href="mailto:info@panetar.in">info@panetar.in</a></span></div>
+    </div>
+    <div class="ft-col">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a onclick="go('home')">Home</a></li>
+        <li><a onclick="go('sarees')">Collection</a></li>
+        <li><a onclick="go('history')">Our Story</a></li>
+        <li><a onclick="go('location')">Visit Us</a></li>
+        <li><a onclick="go('contact')">Contact</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h5>Sarees</h5>
+      <ul>
+        <li><a onclick="go('sarees')">Panetar</a></li>
+        <li><a onclick="go('sarees')">Banarasi Silk</a></li>
+        <li><a onclick="go('sarees')">Kanjivaram</a></li>
+        <li><a onclick="go('sarees')">Patola</a></li>
+        <li><a onclick="go('sarees')">Bandhani</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h5>Visit</h5>
+      <div class="ft-ci"><span>📍</span><span>Shop 12, Silk Bazaar,<br>Kalupur, Ahmedabad 380 001</span></div>
+      <div class="ft-ci"><span>🕐</span><span>Mon–Fri: 10 AM – 8 PM<br>Sat: 10 AM – 9 PM</span></div>
+      <div class="ft-ci"><span>💬</span><span><a href="https://wa.me/919876543210" target="_blank">WhatsApp Us</a></span></div>
+    </div>
+  </div>
+  <div class="ft-div"></div>
+  <div class="ft-bot">
+    <p>© 2024 <span class="gc">Panetar</span>. All rights reserved. Made with devotion in Ahmedabad.</p>
+    <div class="ft-soc">
+      <div class="fsl">📷</div>
+      <div class="fsl">📘</div>
+      <div class="fsl">▶️</div>
+    </div>
+  </div>
+</footer>
+
+<button class="stt" id="stt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+/* NAV */
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nk').forEach(n=>n.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('active');
+  const n=document.getElementById('n-'+id);
+  if(n) n.classList.add('on');
+  window.scrollTo({top:0,behavior:'instant'});
+  setTimeout(observe,80);
+}
+
+/* MOBILE */
+function toggleMob(){document.getElementById('mob').classList.toggle('open');}
+
+/* SCROLL */
+window.addEventListener('scroll',()=>{
+  document.getElementById('hd').classList.toggle('solid',scrollY>40);
+  document.getElementById('stt').classList.toggle('vis',scrollY>380);
+},{ passive:true });
+
+/* FILTER */
+function flt(btn,cat){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.st').forEach(t=>{
+    const show=cat==='all'||t.dataset.c.includes(cat);
+    t.style.display=show?'':'none';
+    if(show){t.style.animation='none';requestAnimationFrame(()=>{t.style.animation='rise .5s var(--ease) both';});}
+  });
+}
+
+/* REVEAL */
+function observe(){
+  const els=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    els.forEach(e=>e.classList.add('in'));return;
+  }
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');}});
+  },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(e=>io.observe(e));
+}
+observe();
+
+/* FORM */
+function sendForm(){
+  const fn=document.getElementById('fn').value.trim();
+  const em=document.getElementById('em').value.trim();
+  if(!fn||!em){alert('Please fill in your name and email address.');return;}
+  document.getElementById('fform').style.display='none';
+  document.getElementById('fsuc').classList.add('show');
+}
+function resetForm(){
+  document.getElementById('fform').style.display='block';
+  document.getElementById('fsuc').classList.remove('show');
+  ['fn','ln','em','ph','msg'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('sb').selectedIndex=0;
+}
+</script>
+</body>
+</html>
