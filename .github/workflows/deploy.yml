@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy index.html to Azure VM via SSH
+      - name: Install Nginx on VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
@@ -22,6 +22,10 @@ jobs:
           password: ${{ secrets.VM_PASSWORD }}
           port: 22
           script: |
+            sudo apt-get update -y
+            sudo apt-get install -y nginx
+            sudo systemctl start nginx
+            sudo systemctl enable nginx
             sudo chmod 777 /var/www/html
 
       - name: Upload index.html to /var/www/html
